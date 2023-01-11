@@ -4,8 +4,6 @@ on:
   push:
     branches:
     - 'master'
-    - 'release/*'
-    - 'pr-metadata-test'
 
 jobs:
   enumerate_targets:
