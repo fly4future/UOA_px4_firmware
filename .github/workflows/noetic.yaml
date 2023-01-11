@@ -2,7 +2,7 @@ name: Noetic
 
 on:
   push:
-    branches: [ 1.11.2 ]
+    branches: [ 1.13.2 ]
 
   schedule:
     - cron:  '0 0 * * *' # at the end of every day
@@ -36,4 +36,3 @@ jobs:
 
       - name: Build
         run: ./.ci/build.sh
-
