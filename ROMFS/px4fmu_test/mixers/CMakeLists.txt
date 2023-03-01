@@ -40,6 +40,7 @@ px4_add_romfs_files(
 	hexa_x.main.mix
 	IO_pass.mix
 	octo_x.main.mix
+	octo_x_reversed.main.mix
 	pass.aux.mix
 	quad_+.main.mix
 	quad_test.mix
