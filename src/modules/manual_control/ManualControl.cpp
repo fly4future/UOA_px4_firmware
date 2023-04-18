@@ -118,7 +118,7 @@ void ManualControl::Run()
 			if (_selector.setpoint().data_source == manual_control_setpoint_s::SOURCE_RC) {
 				if (_previous_switches_initialized) {
 					if (switches.mode_slot != _previous_switches.mode_slot) {
-						evaluateModeSlot(switches.mode_slot);
+					  evaluateModeSlot(switches.mode_slot, action_request_s::SOURCE_RC_MODE_SLOT);
 					}
 
 					if (_param_com_arm_swisbtn.get()) {
@@ -148,7 +148,7 @@ void ManualControl::Run()
 									  commander_state_s::MAIN_STATE_AUTO_RTL);
 
 						} else if (switches.return_switch == manual_control_switches_s::SWITCH_POS_OFF) {
-							evaluateModeSlot(switches.mode_slot);
+					    evaluateModeSlot(switches.mode_slot, action_request_s::SOURCE_RC_MODE_SLOT);
 						}
 					}
 
@@ -158,7 +158,7 @@ void ManualControl::Run()
 									  commander_state_s::MAIN_STATE_AUTO_LOITER);
 
 						} else if (switches.loiter_switch == manual_control_switches_s::SWITCH_POS_OFF) {
-							evaluateModeSlot(switches.mode_slot);
+					    evaluateModeSlot(switches.mode_slot, action_request_s::SOURCE_RC_MODE_SLOT);
 						}
 					}
 
@@ -168,7 +168,8 @@ void ManualControl::Run()
 									  commander_state_s::MAIN_STATE_OFFBOARD);
 
 						} else if (switches.offboard_switch == manual_control_switches_s::SWITCH_POS_OFF) {
-							evaluateModeSlot(switches.mode_slot);
+
+					    evaluateModeSlot(switches.mode_slot, action_request_s::SOURCE_RC_SWITCH);
 						}
 					}
 
@@ -217,7 +218,7 @@ void ManualControl::Run()
 
 				} else {
 					// Send an initial request to switch to the mode requested by RC
-					evaluateModeSlot(switches.mode_slot);
+					evaluateModeSlot(switches.mode_slot, action_request_s::SOURCE_RC_MODE_SLOT);
 				}
 
 				_previous_switches_initialized = true;
@@ -297,34 +298,34 @@ void ManualControl::processStickArming(const manual_control_setpoint_s &input)
 	}
 }
 
-void ManualControl::evaluateModeSlot(uint8_t mode_slot)
+void ManualControl::evaluateModeSlot(uint8_t mode_slot, uint8_t source)
 {
 	switch (mode_slot) {
 	case manual_control_switches_s::MODE_SLOT_NONE:
 		break;
 
 	case manual_control_switches_s::MODE_SLOT_1:
-		sendActionRequest(action_request_s::ACTION_SWITCH_MODE, action_request_s::SOURCE_RC_MODE_SLOT, _param_fltmode_1.get());
+		sendActionRequest(action_request_s::ACTION_SWITCH_MODE, source, _param_fltmode_1.get());
 		break;
 
 	case manual_control_switches_s::MODE_SLOT_2:
-		sendActionRequest(action_request_s::ACTION_SWITCH_MODE, action_request_s::SOURCE_RC_MODE_SLOT, _param_fltmode_2.get());
+		sendActionRequest(action_request_s::ACTION_SWITCH_MODE, source, _param_fltmode_2.get());
 		break;
 
 	case manual_control_switches_s::MODE_SLOT_3:
-		sendActionRequest(action_request_s::ACTION_SWITCH_MODE, action_request_s::SOURCE_RC_MODE_SLOT, _param_fltmode_3.get());
+		sendActionRequest(action_request_s::ACTION_SWITCH_MODE, source, _param_fltmode_3.get());
 		break;
 
 	case manual_control_switches_s::MODE_SLOT_4:
-		sendActionRequest(action_request_s::ACTION_SWITCH_MODE, action_request_s::SOURCE_RC_MODE_SLOT, _param_fltmode_4.get());
+		sendActionRequest(action_request_s::ACTION_SWITCH_MODE, source, _param_fltmode_4.get());
 		break;
 
 	case manual_control_switches_s::MODE_SLOT_5:
-		sendActionRequest(action_request_s::ACTION_SWITCH_MODE, action_request_s::SOURCE_RC_MODE_SLOT, _param_fltmode_5.get());
+		sendActionRequest(action_request_s::ACTION_SWITCH_MODE, source, _param_fltmode_5.get());
 		break;
 
 	case manual_control_switches_s::MODE_SLOT_6:
-		sendActionRequest(action_request_s::ACTION_SWITCH_MODE, action_request_s::SOURCE_RC_MODE_SLOT, _param_fltmode_6.get());
+		sendActionRequest(action_request_s::ACTION_SWITCH_MODE, source, _param_fltmode_6.get());
 		break;
 
 	default:

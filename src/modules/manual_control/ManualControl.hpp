@@ -79,7 +79,7 @@ private:
 	void Run() override;
 	void processStickArming(const manual_control_setpoint_s &input);
 
-	void evaluateModeSlot(uint8_t mode_slot);
+	void evaluateModeSlot(uint8_t mode_slot, uint8_t source);
 	void sendActionRequest(int8_t action, int8_t source, int8_t mode = 0);
 	void publishLandingGear(int8_t action);
 

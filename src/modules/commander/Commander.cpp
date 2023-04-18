@@ -1789,11 +1789,16 @@ void Commander::executeActionRequest(const action_request_s &action_request)
 			_internal_state.main_state_changes++;
 		}
 
-		int ret = main_state_transition(_status, action_request.mode, _status_flags, _internal_state);
+    //If the vehicle is flying in offboard mode, the rc mode switch should not cause state transition (and fall out of offboard)
+    if (_vehicle_control_mode.flag_control_offboard_enabled && action_request.source == action_request_s::SOURCE_RC_MODE_SLOT) {
+      break;
+    }else{
+      int ret = main_state_transition(_status, action_request.mode, _status_flags, _internal_state);
 
-		if (ret == transition_result_t::TRANSITION_DENIED) {
-			print_reject_mode(action_request.mode);
-		}
+      if (ret == transition_result_t::TRANSITION_DENIED) {
+        print_reject_mode(action_request.mode);
+      }
+    }
 
 		break;
 	}
