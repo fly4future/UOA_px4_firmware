@@ -35,6 +35,8 @@
  * @file PreFlightCheck.cpp
  */
 
+#define MRS_DISABLE_FEATURE true
+
 #include "PreFlightCheck.hpp"
 
 #include <drivers/drv_hrt.h>
@@ -72,9 +74,11 @@ bool PreFlightCheck::preflightCheck(orb_advert_t *mavlink_log_pub, vehicle_statu
 							   mavlink_log_pub, status, magnetometerCheck);
 
 			/* mag consistency checks (need to be performed after the individual checks) */
+#ifndef MRS_DISABLE_FEATURE
 			if (!magConsistencyCheck(mavlink_log_pub, status, report_failures)) {
 				failed = true;
 			}
+#endif
 		}
 	}
 
@@ -107,11 +111,13 @@ bool PreFlightCheck::preflightCheck(orb_advert_t *mavlink_log_pub, vehicle_statu
 
 	/* ---- IMU CONSISTENCY ---- */
 	// To be performed after the individual sensor checks have completed
+#ifndef MRS_DISABLE_FEATURE
 	{
 		if (!imuConsistencyCheck(mavlink_log_pub, status, report_failures)) {
 			failed = true;
 		}
 	}
+#endif
 
 	/* ---- Distance Sensor ---- */
 	{
