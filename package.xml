@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>px4</name>
-  <version>1.0.0</version>
+  <version>1.13.2</version>
   <description>The PX4 Flight Stack package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->

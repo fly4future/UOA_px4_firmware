@@ -204,7 +204,7 @@ extern "C" __EXPORT int ver_main(int argc, char *argv[])
 			}
 
 			if (show_all || !strncmp(argv[1], sz_ver_bdate_str, sizeof(sz_ver_bdate_str))) {
-				printf("Build datetime: %s %s\n", __DATE__, __TIME__);
+				/* printf("Build datetime: %s %s\n", __DATE__, __TIME__); */
 				ret = 0;
 
 			}

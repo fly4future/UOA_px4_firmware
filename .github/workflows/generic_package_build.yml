@@ -1,0 +1,22 @@
+name: generic_package_build
+
+on:
+
+  push:
+    branches: [ 1.13.2-deb ]
+
+  pull_request:
+    branches: [ 1.13.2-deb ]
+
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+
+  build:
+    uses: ctu-mrs/ci_scripts/.github/workflows/generic_package_build.yml@master
+    secrets:
+      PUSH_TOKEN: ${{ secrets.PUSH_TOKEN }}
