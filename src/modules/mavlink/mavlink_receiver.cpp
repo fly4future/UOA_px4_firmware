@@ -268,6 +268,10 @@ MavlinkReceiver::handle_message(mavlink_message_t *msg)
 		handle_message_statustext(msg);
 		break;
 
+	case MAVLINK_MSG_ID_ESC_STATUS:
+		handle_message_esc_status(msg);
+		break;
+
 #if !defined(CONSTRAINED_FLASH)
 
 	case MAVLINK_MSG_ID_NAMED_VALUE_FLOAT:
@@ -960,6 +964,22 @@ MavlinkReceiver::handle_message_distance_sensor(mavlink_message_t *msg)
 
 	_distance_sensor_pub.publish(ds);
 }
+
+void
+MavlinkReceiver::handle_message_esc_status(mavlink_message_t *msg)
+{
+	mavlink_esc_status_t esc_status;
+	mavlink_msg_esc_status_decode(msg, &esc_status);
+
+	esc_status_s es{};
+
+	es.timestamp = hrt_absolute_time();
+
+	es.esc_report = esc_status.esc_report;
+
+	_esc_status_pub.publish(es);
+}
+
 
 void
 MavlinkReceiver::handle_message_att_pos_mocap(mavlink_message_t *msg)
