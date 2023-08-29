@@ -976,17 +976,16 @@ MavlinkReceiver::handle_message_esc_status(mavlink_message_t *msg)
 	es.timestamp = esc_status.time_usec;
   es.esc_count = 4;
 
-	for (size_t i = 0; i < 4; i++) {
+  for (size_t i = 0; i < 4; i++) {
     esc_report_s esr{};
     esr.esc_rpm = esc_status.rpm[i];
     esr.esc_voltage = esc_status.voltage[i];
     esr.esc_current = esc_status.current[i];
-	  es.esc[i] = esr; 
+    es.esc[i] = esr; 
   }
 
-	_esc_status_pub.publish(es);
+  _esc_status_pub.publish(es);
 }
-
 
 void
 MavlinkReceiver::handle_message_att_pos_mocap(mavlink_message_t *msg)
