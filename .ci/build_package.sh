@@ -39,11 +39,11 @@ fi
 
 ## | ----------------------- Install ROS ---------------------- |
 
-$PACKAGE_PATH/.ci_scripts/package_build/install_ros.sh
+$PACKAGE_PATH/.ci_scripts/package_build/add_ros_ppa.sh
 
 ## | ----------------------- add MRS PPA ---------------------- |
 
-$PACKAGE_PATH/.ci_scripts/package_build/add_ctu_mrs_unstable_ppa.sh
+curl https://ctu-mrs.github.io/ppa-unstable/add_ppa.sh | bash
 
 ## | ------------------ install dependencies ------------------ |
 
