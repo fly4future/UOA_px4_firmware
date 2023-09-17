@@ -74,7 +74,7 @@ ln -sf $PACKAGE_PATH $WORKSPACE_PATH/src/px4
 ## | ------------------------ build px4 ----------------------- |
 
 cd $WORKSPACE_PATH
-catkin build --limit-status-rate 0.2 --summarize
+catkin build --limit-status-rate 0.2 --summarize --verbose
 
 ## | -------- extract build artefacts into deb package -------- |
 
