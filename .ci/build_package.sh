@@ -9,7 +9,8 @@ trap 'echo "$0: \"${last_command}\" command failed with exit code $?"' ERR
 MY_PATH=`dirname "$0"`
 MY_PATH=`( cd "$MY_PATH" && pwd )`
 
-ARTIFACTS_FOLDER=$1
+VARIANT=$1
+ARTIFACTS_FOLDER=$2
 
 PACKAGE_PATH=/tmp/package_copy
 mkdir -p $PACKAGE_PATH
@@ -43,7 +44,7 @@ $PACKAGE_PATH/.ci_scripts/package_build/add_ros_ppa.sh
 
 ## | ----------------------- add MRS PPA ---------------------- |
 
-curl https://ctu-mrs.github.io/ppa-unstable/add_ppa.sh | bash
+curl https://ctu-mrs.github.io/ppa-${VARIANT}/add_ppa.sh | bash
 
 ## | ------------------ install dependencies ------------------ |
 
@@ -74,7 +75,7 @@ ln -sf $PACKAGE_PATH $WORKSPACE_PATH/src/px4
 ## | ------------------------ build px4 ----------------------- |
 
 cd $WORKSPACE_PATH
-catkin build --limit-status-rate 0.2 --summarize --verbose
+catkin build --limit-status-rate 0.2 --summarize
 
 ## | -------- extract build artefacts into deb package -------- |
 
