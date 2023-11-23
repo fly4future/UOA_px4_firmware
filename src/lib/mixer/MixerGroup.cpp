@@ -188,6 +188,7 @@ MixerGroup::load_from_buf(Mixer::ControlCallback control_cb, uintptr_t cb_handle
 		 * Use the next character as a hint to decide which mixer class to construct.
 		 */
 		switch (*p) {
+
 		case 'Z':
 			m = NullMixer::from_text(p, resid);
 			break;
@@ -199,6 +200,10 @@ MixerGroup::load_from_buf(Mixer::ControlCallback control_cb, uintptr_t cb_handle
 		case 'R':
 			m = MultirotorMixer::from_text(control_cb, cb_handle, p, resid);
 			break;
+
+		/* case 'S': */
+		/* 	m = MultirotorMixer::from_text(control_cb, cb_handle, p, resid); */
+		/* 	break; */
 
 		case 'H':
 			m = HelicopterMixer::from_text(control_cb, cb_handle, p, resid);

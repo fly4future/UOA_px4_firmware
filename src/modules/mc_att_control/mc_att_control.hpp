@@ -91,6 +91,7 @@ private:
 	 * initialize some vectors/matrices from parameters
 	 */
 	void		parameters_updated();
+	void		publish_rates_setpoint();
 
 	float		throttle_curve(float throttle_stick_input);
 
@@ -98,15 +99,21 @@ private:
 	 * Generate & publish an attitude setpoint from stick inputs
 	 */
 	void		generate_attitude_setpoint(const matrix::Quatf &q, float dt, bool reset_yaw_sp);
-
+	/**
+	 * Attitude controller.
+	 */
+	void		control_attitude();
 	AttitudeControl _attitude_control; ///< class for attitude control calculations
 
 	uORB::SubscriptionInterval _parameter_update_sub{ORB_ID(parameter_update), 1_s};
+	uORB::Subscription _v_att_sp_sub{ORB_ID(vehicle_attitude_setpoint)};		/**< vehicle attitude setpoint subscription */
+	uORB::Subscription _v_rates_sp_sub{ORB_ID(vehicle_rates_setpoint)};		/**< vehicle rates setpoint subscription */
 
 	uORB::Subscription _vehicle_attitude_setpoint_sub{ORB_ID(vehicle_attitude_setpoint)};
 	uORB::Subscription _v_control_mode_sub{ORB_ID(vehicle_control_mode)};		/**< vehicle control mode subscription */
 	uORB::Subscription _autotune_attitude_control_status_sub{ORB_ID(autotune_attitude_control_status)};
 	uORB::Subscription _manual_control_setpoint_sub{ORB_ID(manual_control_setpoint)};	/**< manual control setpoint subscription */
+	uORB::Subscription _params_sub{ORB_ID(parameter_update)};			/**< parameter updates subscription */
 	uORB::Subscription _vehicle_status_sub{ORB_ID(vehicle_status)};			/**< vehicle status subscription */
 	uORB::Subscription _vehicle_land_detected_sub{ORB_ID(vehicle_land_detected)};	/**< vehicle land detected subscription */
 
@@ -115,10 +122,17 @@ private:
 	uORB::Publication<vehicle_rates_setpoint_s>	_v_rates_sp_pub{ORB_ID(vehicle_rates_setpoint)};			/**< rate setpoint publication */
 	uORB::Publication<vehicle_attitude_setpoint_s>	_vehicle_attitude_setpoint_pub;
 
+	struct vehicle_attitude_s		_v_att {};		/**< vehicle attitude */
+	struct vehicle_attitude_setpoint_s	_v_att_sp {};		/**< vehicle attitude setpoint */
+	struct vehicle_rates_setpoint_s		_v_rates_sp {};		/**< vehicle rates setpoint */
 	struct manual_control_setpoint_s	_manual_control_setpoint {};	/**< manual control setpoint */
 	struct vehicle_control_mode_s		_v_control_mode {};	/**< vehicle control mode */
+	struct vehicle_status_s			_vehicle_status {};	/**< vehicle status */
+	struct vehicle_land_detected_s		_vehicle_land_detected {};
 
 	perf_counter_t	_loop_perf;			/**< loop duration performance counter */
+
+	matrix::Vector3f _rates_sp;			/**< angular rates setpoint */
 
 	matrix::Vector3f _thrust_setpoint_body; ///< body frame 3D thrust vector
 
@@ -151,6 +165,8 @@ private:
 
 		(ParamFloat<px4::params::MPC_MAN_Y_MAX>) _param_mpc_man_y_max,			/**< scaling factor from stick to yaw rate */
 
+		// (ParamFloat<px4::params::MC_RATT_TH>) _param_mc_ratt_th,
+
 		/* Stabilized mode params */
 		(ParamFloat<px4::params::MPC_MAN_TILT_MAX>) _param_mpc_man_tilt_max,			/**< maximum tilt allowed for manual flight */
 		(ParamFloat<px4::params::MPC_MANTHR_MIN>) _param_mpc_manthr_min,			/**< minimum throttle for stabilized */
@@ -162,5 +178,8 @@ private:
 		(ParamInt<px4::params::MC_AIRMODE>) _param_mc_airmode,
 		(ParamFloat<px4::params::MC_MAN_TILT_TAU>) _param_mc_man_tilt_tau
 	)
+
+	bool _is_tailsitter{false};
+
 };
 

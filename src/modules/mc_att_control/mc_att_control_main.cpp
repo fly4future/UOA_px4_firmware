@@ -222,6 +222,60 @@ MulticopterAttitudeControl::generate_attitude_setpoint(const Quatf &q, float dt,
 	_last_attitude_setpoint = attitude_setpoint.timestamp;
 }
 
+/**
+ * Attitude controller.
+ * Input: 'vehicle_attitude_setpoint' topics (depending on mode)
+ * Output: '_rates_sp' vector
+ * !!!!!!!!!! CASTACKS CHANGES !!!!!!!!!!!!!!!!!!
+ */
+void
+MulticopterAttitudeControl::control_attitude()
+{
+	bool sp_updated = _v_att_sp_sub.update(&_v_att_sp);
+
+	if (sp_updated && (_vehicle_status.nav_state == vehicle_status_s::NAVIGATION_STATE_OFFBOARD
+			   && (_v_control_mode.flag_control_attitude_enabled &&
+			       !_v_control_mode.flag_control_position_enabled &&
+			       !_v_control_mode.flag_control_velocity_enabled &&
+			       !_v_control_mode.flag_control_acceleration_enabled))) {
+
+		// Get the current body to world rotation
+		matrix::Dcmf R_body = matrix::Quatf(_v_att_sp.q_d);
+		matrix::Vector3f thrust_world = R_body * matrix::Vector3f(_v_att_sp.thrust_body);
+		Eulerf new_att_sp_euler(.0f, .0f, _v_att_sp.yaw_body);
+		matrix::Quatf new_att_sp_q = new_att_sp_euler;
+		matrix::Dcmf R_body_new = new_att_sp_q;
+		matrix::Dcmf R_world_new = R_body_new.T();
+		matrix::Vector3f thrust_body = R_world_new * thrust_world;
+
+		for (int i = 0; i < 3; ++i) {
+			_v_att_sp.thrust_body[i] = thrust_body(i);
+		}
+
+		_v_att_sp.roll_body = .0f;
+		_v_att_sp.pitch_body = .0f;
+		new_att_sp_q.copyTo(_v_att_sp.q_d);
+	}
+
+	_rates_sp = _attitude_control.update(Quatf(_v_att.q), Quatf(_v_att_sp.q_d), _v_att_sp.yaw_sp_move_rate);
+}
+
+void
+MulticopterAttitudeControl::publish_rates_setpoint()
+{
+	vehicle_rates_setpoint_s v_rates_sp{};
+
+	v_rates_sp.roll = _rates_sp(0);
+	v_rates_sp.pitch = _rates_sp(1);
+	v_rates_sp.yaw = _rates_sp(2);
+	v_rates_sp.thrust_body[0] = _v_att_sp.thrust_body[0];
+	v_rates_sp.thrust_body[1] = _v_att_sp.thrust_body[1];
+	v_rates_sp.thrust_body[2] = _v_att_sp.thrust_body[2];
+	v_rates_sp.timestamp = hrt_absolute_time();
+
+	_v_rates_sp_pub.publish(v_rates_sp);
+}
+
 void
 MulticopterAttitudeControl::Run()
 {
@@ -323,6 +377,7 @@ MulticopterAttitudeControl::Run()
 
 				generate_attitude_setpoint(q, dt, _reset_yaw_sp);
 				attitude_setpoint_generated = true;
+			// }
 
 			} else {
 				_man_x_input_filter.reset(0.f);
@@ -353,6 +408,16 @@ MulticopterAttitudeControl::Run()
 			v_rates_sp.timestamp = hrt_absolute_time();
 
 			_v_rates_sp_pub.publish(v_rates_sp);
+			// control_attitude();
+
+			// if (_v_control_mode.flag_control_yawrate_override_enabled) {
+			// 	/* Yaw rate override enabled, overwrite the yaw setpoint */
+			// 	_v_rates_sp_sub.update(&_v_rates_sp);
+			// 	const auto yawrate_reference = _v_rates_sp.yaw;
+			// 	_rates_sp(2) = yawrate_reference;
+			// }
+
+			// publish_rates_setpoint();
 		}
 
 		// reset yaw setpoint during transitions, tailsitter.cpp generates

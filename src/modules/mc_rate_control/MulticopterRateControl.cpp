@@ -182,15 +182,21 @@ MulticopterRateControl::Run()
 
 				_rates_sp = man_rate_sp.emult(_acro_rate_max);
 				_thrust_sp = math::constrain(manual_control_setpoint.z, 0.0f, 1.0f);
+				_thrust_sp_3d(0) = manual_control_setpoint.x;
+				_thrust_sp_3d(1) = manual_control_setpoint.y;
+				_thrust_sp_3d(2) = -manual_control_setpoint.z;
 
 				// publish rate setpoint
 				vehicle_rates_setpoint_s v_rates_sp{};
 				v_rates_sp.roll = _rates_sp(0);
 				v_rates_sp.pitch = _rates_sp(1);
 				v_rates_sp.yaw = _rates_sp(2);
-				v_rates_sp.thrust_body[0] = 0.0f;
-				v_rates_sp.thrust_body[1] = 0.0f;
-				v_rates_sp.thrust_body[2] = -_thrust_sp;
+				v_rates_sp.thrust_body[0] = _thrust_sp_3d(0);
+				v_rates_sp.thrust_body[1] = _thrust_sp_3d(1);
+				v_rates_sp.thrust_body[2] = _thrust_sp_3d(2);
+				// v_rates_sp.thrust_body[0] = 0.0f;
+				// v_rates_sp.thrust_body[1] = 0.0f;
+				// v_rates_sp.thrust_body[2] = -_thrust_sp;
 				v_rates_sp.timestamp = hrt_absolute_time();
 
 				_v_rates_sp_pub.publish(v_rates_sp);
@@ -204,6 +210,9 @@ MulticopterRateControl::Run()
 				_rates_sp(0) = PX4_ISFINITE(v_rates_sp.roll)  ? v_rates_sp.roll  : rates(0);
 				_rates_sp(1) = PX4_ISFINITE(v_rates_sp.pitch) ? v_rates_sp.pitch : rates(1);
 				_rates_sp(2) = PX4_ISFINITE(v_rates_sp.yaw)   ? v_rates_sp.yaw   : rates(2);
+				_thrust_sp_3d(0) = v_rates_sp.thrust_body[0];
+				_thrust_sp_3d(1) = v_rates_sp.thrust_body[1];
+				_thrust_sp_3d(2) = v_rates_sp.thrust_body[2];
 				_thrust_sp = -v_rates_sp.thrust_body[2];
 			}
 		}
@@ -254,6 +263,9 @@ MulticopterRateControl::Run()
 			actuators.control[actuator_controls_s::INDEX_YAW] = PX4_ISFINITE(att_control(2)) ? att_control(2) : 0.0f;
 			actuators.control[actuator_controls_s::INDEX_THROTTLE] = PX4_ISFINITE(_thrust_sp) ? _thrust_sp : 0.0f;
 			actuators.control[actuator_controls_s::INDEX_LANDING_GEAR] = _landing_gear;
+			actuators.control[actuator_controls_s::INDEX_X_THRUST] = (PX4_ISFINITE(_thrust_sp_3d(0))) ? _thrust_sp_3d(0) : 0.0f;
+			actuators.control[actuator_controls_s::INDEX_Y_THRUST] = (PX4_ISFINITE(_thrust_sp_3d(1))) ? _thrust_sp_3d(1) : 0.0f;
+			actuators.control[actuator_controls_s::INDEX_Z_THRUST] = (PX4_ISFINITE(_thrust_sp_3d(2))) ? _thrust_sp_3d(2) : 0.0f;
 			actuators.timestamp_sample = angular_velocity.timestamp_sample;
 
 			if (!_vehicle_status.is_vtol) {

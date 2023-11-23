@@ -173,6 +173,7 @@ set(models
 	tailsitter
 	techpod
 	tiltrotor
+	hexa_x_tilt
 	typhoon_h480
 	typhoon_h480_ctrlalloc
 	uuv_bluerov2_heavy
@@ -184,6 +185,7 @@ set(worlds
 	baylands
 	empty
 	ksql_airport
+	hexa_x_tilt
 	mcmillan_airfield
 	sonoma_raceway
 	warehouse

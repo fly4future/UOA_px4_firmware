@@ -25,6 +25,7 @@ param set-default PWM_MAIN_MIN 1075
 param set-default PWM_MAIN_RATE 400
 
 param set-default GPS_UBX_DYNMODEL 6
+param set OMNI_ATT_MODE 0
 
 #
 # This is the gimbal pass mixer.
@@ -38,5 +39,5 @@ set PWM_OUT 1234
 set PWM_AUX_OUT 1234
 
 # Enable safety button
-param set-default CBRK_IO_SAFETY 0 
+param set-default CBRK_IO_SAFETY 0
 

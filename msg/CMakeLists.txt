@@ -116,6 +116,7 @@ set(msg_files
 	navigator_mission_item.msg
 	npfg_status.msg
 	obstacle_distance.msg
+	omni_attitude_status.msg
 	offboard_control_mode.msg
 	onboard_computer_status.msg
 	optical_flow.msg

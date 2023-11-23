@@ -63,6 +63,7 @@ public:
 	 * @param yaw_weight A fraction [0,1] deprioritizing yaw compared to roll and pitch
 	 */
 	void setProportionalGain(const matrix::Vector3f &proportional_gain, const float yaw_weight);
+	void setProportionalGain(const matrix::Vector3f &proportional_gain);
 
 	/**
 	 * Set hard limit for output rate setpoints
@@ -99,6 +100,15 @@ public:
 	 * @return [rad/s] body frame 3D angular rate setpoint vector to be executed by the rate controller
 	 */
 	matrix::Vector3f update(const matrix::Quatf &q) const;
+
+	/**
+	 * Run one control loop cycle calculation
+	 * @param q estimation of the current vehicle attitude unit quaternion
+	 * @param qd desired vehicle attitude setpoint
+	 * @param yawspeed_feedforward [rad/s] yaw feed forward angular rate in world frame
+	 * @return [rad/s] body frame 3D angular rate setpoint vector to be executed by the rate controller
+	 */
+	matrix::Vector3f update(matrix::Quatf q, matrix::Quatf qd, float yawspeed_feedforward);
 
 private:
 	matrix::Vector3f _proportional_gain;
