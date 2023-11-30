@@ -38,7 +38,7 @@ set(geometry_files
 	hex_plus.toml
 	hex_t.toml
 	hex_x.toml
-	hex_tilt_x.toml
+	hex_x_tilt.toml
 	octa_cox.toml
 	octa_cox_wide.toml
 	octa_plus.toml
