@@ -19,6 +19,7 @@
 #
 
 . ${R}etc/init.d/rc.mc_defaults
+param set-default MAV_TYPE 13
 
 if [ $AUTOCNF == yes ]
 then

@@ -80,5 +80,4 @@ px4_add_romfs_files(
 	6012_typhoon_h480_ctrlalloc
 	6012_typhoon_h480_ctrlalloc.post
 	6100_hexa_x_tilt
-	6100_hexa_x_tilt.post
 )
